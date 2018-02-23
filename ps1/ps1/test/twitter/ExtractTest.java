@@ -7,9 +7,11 @@ import static org.junit.Assert.*;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class ExtractTest {
 
@@ -24,6 +26,14 @@ public class ExtractTest {
     
     private static final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about rivest so much?", d1);
     private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype", d2);
+    private static final Tweet tweet3 = new Tweet(3,"cat","Do you hear the peopel sing @realtrump_whitehouse",d1);
+    private static final Tweet tweet4 = new Tweet(4,"dog","@shakespear,@denmark-09haha to be,or not to be,that is a question@Shakespear@hamlet@--hehe",d2);
+    private static final Tweet tweet5 = new Tweet(5,"eve","to die,to sleep,and by a sleep to say we end the heartache@mit.edu.cn,23424@qq.com",d2);
+    /*one username 
+    morethanone usernames
+    letter
+    digit
+    hypen underscore*/
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -36,6 +46,22 @@ public class ExtractTest {
         
         assertEquals("expected start", d1, timespan.getStart());
         assertEquals("expected end", d2, timespan.getEnd());
+        
+    }
+    
+    @Test
+    public void testGetTimespanOneTweet() {
+    	Timespan timespan =Extract.getTimespan(Arrays.asList(tweet1));
+    	
+    	assertEquals("expected start",d1,timespan.getStart());
+    	assertEquals("expected end",d1,timespan.getEnd());
+    }
+    @Test
+    public void testGetTimespanTwoSimultaneousTweets() {
+    	Timespan timespan = Extract.getTimespan(Arrays.asList(tweet1,tweet1));
+    	
+    	assertEquals("expectstart",d1,timespan.getStart());
+    	assertEquals("expected end",d1,timespan.getEnd());
     }
     
     @Test
@@ -43,6 +69,32 @@ public class ExtractTest {
         Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet1));
         
         assertTrue("expected empty set", mentionedUsers.isEmpty());
+    }
+    @Test
+    public void testGetMentionedUsersOneMention() {
+    	Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet3));
+    	Set<String> expectedUsers = new HashSet<>();
+    	expectedUsers.add("@realtrump_whitehouse");
+    	assertTrue(mentionedUsers.equals(expectedUsers));
+    }
+    
+    @Test
+    public void testGetMentionedUsersMoreMentions() {
+    	Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet3,tweet4));
+    	Set<String> expecteUsers= new HashSet<>();
+        expecteUsers.add("@realtrump_whitehouse");
+        expecteUsers.add("@shakespear");
+        expecteUsers.add("@hamlet");
+        expecteUsers.add("@denmark-09haha");
+        assertTrue(mentionedUsers.equals(expecteUsers));
+        
+    	
+    }
+    
+    @Test
+    public void testGetMentionedUsersEmailDomain() {
+    	Set<String> mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweet5));
+    	assertTrue(mentionedUsers.isEmpty());
     }
 
     /*

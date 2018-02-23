@@ -3,9 +3,12 @@
  */
 package twitter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import java.util.regex.Pattern;
+import java.time.Instant;
+import java.util.regex.Matcher;
 /**
  * Extract consists of methods that extract information from a list of tweets.
  * 
@@ -24,7 +27,19 @@ public class Extract {
      *         every tweet in the list.
      */
     public static Timespan getTimespan(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+    	Instant start=tweets.get(0).getTimestamp();
+    	Instant end=tweets.get(0).getTimestamp();
+    	for (Tweet tweeter: tweets) {
+    		if(tweeter.getTimestamp().isAfter(end)) {
+    			end=tweeter.getTimestamp();
+    		}
+    		if(tweeter.getTimestamp().isBefore(start)) {
+    			start=tweeter.getTimestamp();
+    		}
+    	}
+    	Timespan tweetSpan= new Timespan(start,end);
+    	return tweetSpan;
+        //throw new RuntimeException("not implemented");
     }
 
     /**
@@ -43,7 +58,32 @@ public class Extract {
      *         include a username at most once.
      */
     public static Set<String> getMentionedUsers(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+    	String pattern="(@{1}\\w+[A-Za-z0-9_-]*)";
+    	
+    	Pattern r=Pattern.compile(pattern);
+    	Pattern r_1=Pattern.compile("(@{1}\\w+)(\\.[a-zA-Z]{2,5})");
+    	Set<String> usernames=new HashSet<>();
+        for(Tweet tweeter: tweets) {
+        	String text=tweeter.getText();
+        	Matcher m=r.matcher(text);
+        	Matcher m_1=r_1.matcher(text);
+        	while(m.find()) {
+        		String username=m.group();
+        		if(!usernames.contains(username.toLowerCase())) {
+        			usernames.add(username);
+        		}
+        
+        	}
+        	
+        	while(m_1.find()) {
+        		if(usernames.contains(m_1.group(1))) {
+        			usernames.remove(m_1.group(1));
+        		}
+        	}
+        }
+        return usernames;
+    	
+    	//throw new RuntimeException("not implemented");
     }
 
 }
