@@ -3,6 +3,12 @@
  */
 package twitter;
 
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,9 +47,23 @@ public class SocialNetwork {
      *         either authors or @-mentions in the list of tweets.
      */
     public static Map<String, Set<String>> guessFollowsGraph(List<Tweet> tweets) {
-        throw new RuntimeException("not implemented");
+        Map<String,Set<String>> follows = new HashMap<>();
+        Set<String> mentionedUsers = new HashSet<>();
+        for (Tweet tweeter : tweets) {
+        	mentionedUsers = Extract.getMentionedUsers(Arrays.asList(tweeter));
+        	if(!follows.containsKey(tweeter.getAuthor().toLowerCase())){
+        	follows.put(tweeter.getAuthor().toLowerCase(), mentionedUsers);
+        	}else {
+        		follows.get(tweeter.getAuthor().toLowerCase()).addAll(mentionedUsers);
+        	}
+        	
+        }
+    	return follows;
+    	//throw new RuntimeException("not implemented");
     }
+    
 
+     
     /**
      * Find the people in a social network who have the greatest influence, in
      * the sense that they have the most followers.
@@ -54,7 +74,38 @@ public class SocialNetwork {
      *         descending order of follower count.
      */
     public static List<String> influencers(Map<String, Set<String>> followsGraph) {
-        throw new RuntimeException("not implemented");
+    	/*establish a User class which consists of two fields and one construction method.*/
+    	class User{
+    		public String userName_;
+    		public int followers;
+    		public User(String userName_,int followers) {
+    			this.userName_=userName_;
+    			this.followers=followers;
+    		}
+    	}
+    	
+    	
+    	
+    	List<User> influencialUsers = new ArrayList<>();// construct a list with objects of User Class as elements
+    	for(String userName : followsGraph.keySet()) {
+    		User user = new User(userName,followsGraph.get(userName).size());//construct user object from followGraph, with the key as username_ and the valueset's size as followers count
+    		influencialUsers.add(user);
+    	}
+    	influencialUsers.sort(new Comparator<User>() {//sort the influencialUsers list wiht interface comparator
+    		@Override // override the "compare" method of interface Comparator 
+    		public int compare(User user1,User user2) {
+    			return -user1.followers+user2.followers;//if user1's followers is less than user2's,return positive.if positive,exchange user1's position with user2's
+    		}
+		});
+
+    	List<String> userNames = new ArrayList<>();//since influencialUsers is a list of objects, userNames is the wanted list made of String.
+    	for(User user_1: influencialUsers) {
+    		userNames.add(user_1.userName_);
+    	}
+    	
+    	return userNames;
+    	
+        //throw new RuntimeException("not implemented");
     }
 
 }
