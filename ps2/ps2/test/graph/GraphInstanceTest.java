@@ -41,6 +41,11 @@ public abstract class GraphInstanceTest {
                 Collections.emptySet(), emptyInstance().vertices());
     }
     
+    @Test
+    public void testAdd() {
+    	String vertice="v";
+    	assertTrue(emptyInstance().add(vertice));
+    }
     // TODO other tests for instance methods of Graph
     
 }
