@@ -48,10 +48,11 @@ public abstract class GraphInstanceTest {
     @Test
     public void testAdd() {
     	String vertice="v";
-    	String vertice1="v";
-    	assertTrue(emptyInstance().add(vertice));
-    	assertFalse(emptyInstance().add(vertice));
-    	assertTrue(emptyInstance().add(vertice1));
+    	String vertice1="v1";
+    	Graph<String> em= emptyInstance();
+    	assertTrue(em.add(vertice));
+    	assertFalse(em.add(vertice));
+    	assertTrue(em.add(vertice1));
     }
     // TODO other tests for instance methods of Graph
     

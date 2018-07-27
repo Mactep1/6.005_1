@@ -15,9 +15,9 @@ import java.util.Set;
  * 
  * <p>PS2 instructions: you MUST use the provided rep.
  */
-public class ConcreteVerticesGraph implements Graph<String> {
+public class ConcreteVerticesGraph<L> implements Graph<L> {
     
-    private final List<Vertex> vertices;
+    private final List<Vertex<L>> vertices;
     
     // Abstraction function:
     //   represent concreteverticesgraph
@@ -27,9 +27,14 @@ public class ConcreteVerticesGraph implements Graph<String> {
     //   field is private and final;vertices is a mutable type,so defensive copy is made in the constructor
     
     //  constructor
-    public ConcreteVerticesGraph(List<Vertex> vertices) {
+    public ConcreteVerticesGraph(List<Vertex<L>> vertices) {
 		// TODO Auto-generated constructor stub
     	this.vertices=new ArrayList<>(vertices);
+    	checkRep();
+    }
+    
+    public ConcreteVerticesGraph(){
+    	this.vertices=new ArrayList<>();
     	checkRep();
     }
     //  checkRep
@@ -40,25 +45,25 @@ public class ConcreteVerticesGraph implements Graph<String> {
     		}
     	}
     }
-    @Override public boolean add(String vertex) {
+    @Override public boolean add(L vertex) {
     	//throw new RuntimeException("not implemented");
-    	for(Vertex v:vertices) {
+    	for(Vertex<L> v:vertices) {
     		if(v.getVertex().equals(vertex)) {
     			return false;
     		}
     	}
-    	HashMap<String, Integer> newHashmap=new HashMap<>();
-    	Vertex newVertex=new Vertex(vertex,newHashmap);
+    	HashMap<L, Integer> newHashmap=new HashMap<>();
+    	Vertex<L> newVertex=new Vertex<L>(vertex,newHashmap);
     	vertices.add(newVertex);
     	return true;
     }
     
-    @Override public int set(String source, String target, int weight) {
+    @Override public int set(L source, L target, int weight) {
         //throw new RuntimeException("not implemented");
     	int w=0;
     	int flag=0;
     	int flag_target=0;
-    	for(Vertex v:vertices) {
+    	for(Vertex<L> v:vertices) {
     		
     	/*	if (v.getVertex().equals(source)) {
     			/*if(v.getTargets().containsKey(target)) {
@@ -91,7 +96,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
     		if(v.getVertex().equals(source)) {
     			v.updateTargets(target, weight);
     			if(v.getTargets().containsKey(target)) {
-    				w=v.getTargets().get(source);
+    				w=(int) v.getTargets().get(source);
     			}else {
     				w=0;
     			}
@@ -104,9 +109,9 @@ public class ConcreteVerticesGraph implements Graph<String> {
     	}
     	if(flag==0) {
     		if(weight!=0) {
-    		HashMap<String, Integer> targets=new HashMap<>();
+    		HashMap<L, Integer> targets=new HashMap<>();
     		targets.put(target, weight);
-    		Vertex newSource=new Vertex(source,targets);
+    		Vertex<L> newSource=new Vertex<L>(source,targets);
     		vertices.add(newSource);
     	    w=0;
     		}else {
@@ -114,8 +119,8 @@ public class ConcreteVerticesGraph implements Graph<String> {
     		}
     	}
     	if(flag_target==0) {
-    		HashMap<String, Integer> targets=new HashMap<>();
-    		Vertex newTarget=new Vertex(target,targets);
+    		HashMap<L, Integer> targets=new HashMap<>();
+    		Vertex<L> newTarget=new Vertex<L>(target,targets);
     		vertices.add(newTarget);
     	}
     	return w;
@@ -123,14 +128,14 @@ public class ConcreteVerticesGraph implements Graph<String> {
     	
     }
     
-    @Override public boolean remove(String vertex) {
+    @Override public boolean remove(L vertex) {
         //throw new RuntimeException("not implemented");
     	boolean flag=false;
-    	for(Vertex v:vertices) {
+    	for(Vertex<L> v:vertices) {
     		if(v.getVertex().equals(vertex)) {
     			flag=true;
     			vertices.remove(v);
-    			for(Vertex v1:vertices) {
+    			for(Vertex<L> v1:vertices) {
     				if(v1.getTargets().containsKey(vertex)) {
     					v1.getTargets().remove(vertex);
     				}
@@ -140,29 +145,29 @@ public class ConcreteVerticesGraph implements Graph<String> {
     	return flag;
     }
     
-    @Override public Set<String> vertices() {
+    @Override public Set<L> vertices() {
         //throw new RuntimeException("not implemented");
-    	Set<String> vs=new HashSet<>();
-    	for(Vertex v:vertices) {
-    		vs.add(v.getVertex());
+    	Set<L> vs=new HashSet<>();
+    	for(Vertex<L> v:vertices) {
+    		vs.add((L) v.getVertex());
     	}
     	return vs;
     }
     
-    @Override public Map<String, Integer> sources(String target) {
+    @Override public Map<L, Integer> sources(L target) {
         //throw new RuntimeException("not implemented");
-    	HashMap<String, Integer> sourcemap=new HashMap<>();
-    	for(Vertex v:vertices) {
+    	HashMap<L, Integer> sourcemap=new HashMap<>();
+    	for(Vertex<L> v:vertices) {
     		if(v.getTargets().containsKey(target)) {
-    			sourcemap.put(v.getVertex(), v.getTargets().get(target));
+    			sourcemap.put((L) v.getVertex(), (Integer)v.getTargets().get(target));
     		}
     	}
     	return sourcemap;
     }
     
-    @Override public Map<String, Integer> targets(String source) {
+    @Override public Map<L, Integer> targets(L source) {
         //throw new RuntimeException("not implemented");
-    	for(Vertex v:vertices) {
+    	for(Vertex<L> v:vertices) {
     		if(v.getVertex().equals(source)) {
     			return v.getTargets();
     		}
@@ -173,7 +178,7 @@ public class ConcreteVerticesGraph implements Graph<String> {
     //  toString()
     @Override public String toString() {
     	StringBuilder sb=new StringBuilder();
-    	for(Vertex v:vertices) {
+    	for(Vertex<L> v:vertices) {
     		sb.append(v.toString());
     		sb.append("\r\n");
     	}
@@ -189,12 +194,12 @@ public class ConcreteVerticesGraph implements Graph<String> {
  * <p>PS2 instructions: the specification and implementation of this class is
  * up to you.
  */
-class Vertex {
+class Vertex<L> {
     
     // TODO fields
-    private final String vertex;
+    private final L vertex;
     //private final HashMap<String, Integer> sources;
-    private final HashMap<String, Integer> targets;
+    private final HashMap<L, Integer> targets;
     // Abstraction function:
     //   represent the vertex with associated targets(weight)
     // Representation invariant:
@@ -206,17 +211,17 @@ class Vertex {
     //all fields are private and final
     
     //  constructor
-    public Vertex(String vertex,HashMap<String,Integer> targets) {
+    public Vertex(L vertex,HashMap<L,Integer> targets) {
     	this.vertex=vertex;
     	//this.sources=new HashMap<>(sources);
     	this.targets=new HashMap<>(targets);
-    	
+    	checkRep();
     }
     //  checkRep
     private void checkRep() {
     	assert vertex!=null;
 
-    	for(String key:targets.keySet()) {
+    	for(L key:targets.keySet()) {
     		assert key!=null;
     		assert targets.get(key)!=null;
     	}
@@ -224,15 +229,15 @@ class Vertex {
     }
     // TODO methods
 
-    public String getVertex() {
+    public L getVertex() {
     	return vertex;
     }
     
     //public HashMap<String, Integer> getSources(){
     	
     //}
-    public HashMap<String, Integer> getTargets(){
-    		HashMap<String, Integer> returnTargets= new HashMap<>(targets);
+    public HashMap<L, Integer> getTargets(){
+    		HashMap<L, Integer> returnTargets= new HashMap<>(targets);
     		return returnTargets;
     }
     
@@ -241,7 +246,7 @@ class Vertex {
     	
     //}
     /*target is not null*/
-    public void updateTargets(String target,Integer weight) {
+    public void updateTargets(L target,Integer weight) {
     	if(weight==0) {
     		if(targets.containsKey(target)) {
     			targets.remove(target);
@@ -249,6 +254,7 @@ class Vertex {
     	}else {
     		targets.put(target, weight);
     	}
+    	checkRep();
     }
 
     //  toString()
