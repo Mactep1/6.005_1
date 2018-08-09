@@ -5,6 +5,8 @@ package poet;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+
 import org.junit.Test;
 
 /**
@@ -21,5 +23,9 @@ public class GraphPoetTest {
     }
     
     // TODO tests
+    @Test
+    public void testConstructor() {
+    File test=new File("test/poet/test.txt");
     
+    }
 }

@@ -65,6 +65,8 @@ public class ConcreteEdgesGraph<L> implements Graph<L> {
     @Override public int set(L source, L target, int weight) {
         //throw new RuntimeException("not implemented");
     	if(weight!=0) {
+    	vertices.add(source);
+    	vertices.add(target);
     	Edge<L> e1=new Edge<L>(source,target,weight);
     	for(Edge<L> e:edges) {
     		if(e.equals(e1)) {
@@ -74,11 +76,12 @@ public class ConcreteEdgesGraph<L> implements Graph<L> {
     	edges.add(e1);
     	checkRep();
     	return 0;
-    	}
+    	}                                      
     	else {
     		Edge<L> e2=new Edge<L>(source,target,1);
     		for(Edge<L> e:edges) {
-    			if(e.equals(e2)) {
+    			if(e.verticeEquals(e2)) {
+    				edges.remove(e);
     				return e.getWeight();
     			}
     		}
@@ -208,6 +211,11 @@ final class Edge<L>{
     	else {
     		return false;
     	}
+    }
+    public boolean verticeEquals(Edge<L> e) {
+    	    
+    		return e.getSource().equals(source)&& e.getTarget().equals(target);
+    	
     }
     @Override
     public boolean equals(Object o) {

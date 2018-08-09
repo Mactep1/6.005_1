@@ -5,6 +5,9 @@ package graph;
 
 import static org.junit.Assert.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 
 /**
@@ -27,7 +30,24 @@ public class ConcreteEdgesGraphTest extends GraphInstanceTest {
     /*
      * Testing ConcreteEdgesGraph...
      */
-    
+    @Test public void test() {
+    	ConcreteEdgesGraph<String> testGraph=new ConcreteEdgesGraph<>();
+    	String v1="a";
+    	String v2="b";
+    	String v3="c";
+    	testGraph.set(v1, v2, 1);
+    	testGraph.set(v2, v3, 1);
+    	testGraph.set(v3, v1, 1);
+    	Set<String> s=new HashSet<>();
+    	s.add("a");
+    	s.add("b");
+    	s.add("c");
+    	System.out.println(s);
+    	System.out.println(testGraph.vertices());
+    	assertEquals(s, testGraph.vertices());
+    	
+    	
+    }
     // Testing strategy for ConcreteEdgesGraph.toString()
     //   TODO
     

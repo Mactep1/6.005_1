@@ -4,7 +4,15 @@
 package poet;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import graph.Graph;
 
@@ -55,11 +63,14 @@ public class GraphPoet {
     private final Graph<String> graph = Graph.empty();
     
     // Abstraction function:
-    //   TODO
+    //   represent the graph-based word affinity poetry
     // Representation invariant:
-    //   TODO
+    //   vertices of graph is string,case-insensitive,not null
+    //edges are positive integers
     // Safety from rep exposure:
-    //   TODO
+    //   field graph is private,thus can not be accessed from outside
+    //field is final,thus can not be inheritated 
+    //field is mutable,so defensive copys are made
     
     /**
      * Create a new poet with the graph from corpus (as described above).
@@ -68,7 +79,31 @@ public class GraphPoet {
      * @throws IOException if the corpus file cannot be found or read
      */
     public GraphPoet(File corpus) throws IOException {
-        throw new RuntimeException("not implemented");
+        //throw new RuntimeException("not implemented");
+    	//FileReader corpusFile= new FileReader(corpus);
+    	//Files.readAllLines(corpus.toPath());
+    	Scanner sc=new Scanner(corpus);
+    	List<String> s=new ArrayList<>();
+    	while(sc.hasNext()) {
+    		s.add(sc.next().toLowerCase());
+    	}
+    	for(String str:s) {
+    		if(s.indexOf(str)<s.size()-1) {
+    		String target=s.get(s.indexOf(str)+1);
+    		int w=1;
+    		if(graph.targets(str).containsKey(s.get(s.indexOf(str)+1))){
+    			w=graph.targets(str).get(target);
+    			w=w+1;
+    		}
+    		graph.set(str, target, w);
+    		//System.out.println(s.indexOf(str));
+    	}
+    	}
+    	sc.close();
+    	System.out.println(graph.vertices());
+    	System.out.println(graph.targets("test"));
+    //System.out.println(s);
+    //checkRep();
     }
     
     // TODO checkRep
@@ -80,9 +115,36 @@ public class GraphPoet {
      * @return poem (as described above)
      */
     public String poem(String input) {
-        throw new RuntimeException("not implemented");
+       // throw new RuntimeException("not implemented");
+    	//String input1=input.toLowerCase();
+    	String[] in=input.split(" ");
+    	List<String> inp=Arrays.asList(in);
+    	List<String> inpu=new ArrayList<>(inp);
+    	for(int i=0;i<inpu.size()-1;i++) {
+    		Map<String, Integer> targets=graph.targets(inpu.get(i));
+    		int w=0;
+			String insertWord=null;
+    		for(String s:targets.keySet()) {
+    			
+    			if(graph.targets(s).containsKey(inpu.get(i+1))) {
+    				if(targets.get(s)+graph.targets(s).get(inpu.get(i+1))>w) {
+    					w=targets.get(s)+graph.targets(s).get(inpu.get(i+1));
+    					insertWord=s;
+    				}
+    			}
+    		}
+    		if(insertWord!=null) {
+    			inpu.add(i+1, insertWord);
+    			i++;
+    		}
+    	
+    	}
+    	return inpu.toString();
+    	
     }
     
     // TODO toString()
-    
+   // @Override public String toString() {
+    	
+    //}
 }
