@@ -17,7 +17,7 @@ package expressivo;
 public interface Expression {
     
     // Datatype definition
-    //   TODO
+    //   expression= node(operator,expression,expression)+number+variable
     
     /**
      * Parse an expression.
@@ -53,5 +53,7 @@ public interface Expression {
     public int hashCode();
     
     // TODO more instance methods
+    public Expression addLeftExpression(Expression leftExpression,String operator);
     
+    public Expression addRightExpression(Expression rightExpression,String operator);
 }
