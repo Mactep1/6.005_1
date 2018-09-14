@@ -3,6 +3,17 @@
  */
 package expressivo;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.antlr.runtime.ANTLRInputStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.TokenStream;
+
+import expressivo.parser.ExpressionLexer;
+
 /**
  * An immutable data type representing a polynomial expression of:
  *   + and *
@@ -26,7 +37,17 @@ public interface Expression {
      * @throws IllegalArgumentException if the expression is invalid
      */
     public static Expression parse(String input) {
-        throw new RuntimeException("unimplemented");
+        //throw new RuntimeException("unimplemented");
+    	InputStream is = new ByteArrayInputStream(input.getBytes());
+
+    
+		CharStream stream =new ANTLRInputStream(input);
+    	
+    	ExpressionLexer lexer=new ExpressionLexer(stream);
+    	
+    	TokenStream tokens= new CommonTokenStream(lexer);
+    	
+    	
     }
     
     /**

@@ -29,10 +29,35 @@ import Configuration;
  * For more information, see reading 18 about parser generators, which explains
  * how to use Antlr and has links to reference information.
  */
-root : sum EOF;
-sum : primitive ('+' primitive)*;
-primitive : NUMBER | '(' sum ')';
-NUMBER : [0-9]+;
+/*root : sum EOF;
+ *sum : primitive ('+' primitive)*;
+ *primitive : NUMBER | '(' sum ')';
+ *NUMBER : [0-9]+;
+*/
+
+//root: expression EOF;
+//expression:((primitive (OPERATOR primitive)*) |('('primitive (OPERATOR primitive)* ')'))(OPERATOR (primitive (OPERATOR primitive)*) |('('primitive (OPERATOR primitive)* ')'))* ;
+//primitive:numberstring | expression;
+//numberstring:number|string;
+//primitive:number|string;
+
+
+
+root: expression EOF;
+expression:primitive 
+		   | expression OPERATOR expression
+		   | ('(' expression OPERATOR expression ')');
+//exp1:(primitive | expression);
+primitive:numberstring1 | ('(' numberstring1 ')');
+numberstring1:number | string;
+number:NUMBER | '('NUMBER')';
+string:STRING | '('STRING')';
+NUMBER:[0-9]+('.'[0-9]+)?;
+STRING:[a-zA-Z]+;
+OPERATOR:'+' | '*';
+
 
 /* Tell Antlr to ignore spaces around tokens. */
 SPACES : [ ]+ -> skip;
+
+
