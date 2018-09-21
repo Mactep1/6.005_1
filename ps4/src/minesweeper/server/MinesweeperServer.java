@@ -144,7 +144,7 @@ public class MinesweeperServer {
      * 
      * <br> PORT is an optional integer in the range 0 to 65535 inclusive, specifying the port the server
      *      should be listening on for incoming connections.
-     * <br> E.g. "MinesweeperServer --port 1234" starts the server listening on port 1234.
+     * <br> 	E.g. "MinesweeperServer --port 1234" starts the server listening on port 1234.
      * 
      * <br> SIZE_X and SIZE_Y are optional positive integer arguments, specifying that a random board of size
      *      SIZE_X*SIZE_Y should be generated.
