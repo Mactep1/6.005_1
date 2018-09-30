@@ -50,19 +50,21 @@ public class MinesweeperServer {
      * @throws IOException if the main server socket is broken
      *                     (IOExceptions from individual clients do *not* terminate serve())
      */
-    public void serve() throws IOException {
+    public void serve(Board board) throws IOException {
         while (true) {
             // block until a client connects
             Socket socket = serverSocket.accept();
+            System.out.println("server(board)"+board.getBoardCopy()[2][2]);
+            (new Thread(new ServerRunnable(socket,board,debug))).start();
 
             // handle the client
-            try {
+            /*try {
                 handleConnection(socket);
             } catch (IOException ioe) {
                 ioe.printStackTrace(); // but don't terminate serve()
             } finally {
                 socket.close();
-            }
+            } */
         }
     }
 
@@ -177,7 +179,7 @@ public class MinesweeperServer {
      */
     public static void main(String[] args) {
         // Command-line argument parsing is provided. Do not change this method.
-        boolean debug = false;
+        boolean debug = true;
         int port = DEFAULT_PORT;
         int sizeX = DEFAULT_SIZE;
         int sizeY = DEFAULT_SIZE;
@@ -248,8 +250,51 @@ public class MinesweeperServer {
     public static void runMinesweeperServer(boolean debug, Optional<File> file, int sizeX, int sizeY, int port) throws IOException {
         
         // TODO: Continue implementation here in problem 4
+    	Board board;
         
+    	if(file.isPresent()) {
+    		BufferedReader br=new BufferedReader(new FileReader(file.get()));
+    		String line_0=br.readLine();
+    		String regex="[0-9]+ [0-9]+";
+    		String regex_="([0-1] )*[0-1]";
+    		int x,y;
+    		if(line_0.matches(regex)) {
+    			String[] tokens=line_0.split(" ");
+    			x=Integer.parseInt(tokens[0]);
+    			y=Integer.parseInt(tokens[1]);
+    		}else {
+    			throw new IllegalArgumentException("first line"+line_0);
+    		}
+    		
+    		String boardFile[][]=new String[y][x];
+    		int i=0;
+    		for(String line=br.readLine();line!=null;line=br.readLine()) {
+    			if(i>y-1) {
+    				throw new IllegalArgumentException(Integer.toString(i)+"th row>"+Integer.toString(y-1)+"rows in total");
+    			}
+    			if(line.matches(regex_)) {
+    				String[] tokens_=line.split(" ");
+    				if(tokens_.length==x) {
+    					boardFile[i]=tokens_;
+    				}else {
+    					throw new IllegalArgumentException(line);
+    				}
+    			}
+    			i++;
+    		}
+    		if(i!=y) {
+    			throw new IllegalArgumentException(Integer.toString(i)+"rows not equal"+Integer.toString(y)+"rows");
+    		}
+    		
+    		 board=new Board(boardFile);
+    		
+    	}else {
+    		 board=new Board(sizeX, sizeY, (int)(0.25*sizeX*sizeY));
+    	}
+    	
+    	
+    	
         MinesweeperServer server = new MinesweeperServer(port, debug);
-        server.serve();
+		server.serve(board);
     }
 }
